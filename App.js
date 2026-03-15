@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font'; // Hook do ładowania czcionek
+import { StatusBar } from 'expo-status-bar';
+
 import AppLoading from 'expo-app-loading'; // Komponent blokujący ekran startowy
 
 import StartGameScreen from './screens/StartGameScreen';
@@ -13,7 +15,7 @@ import GameOverScreen from './screens/GameOverScreen';
 
 export default function App() {
   const [userNumber, setUserNumber] = useState(); // Stan przechowujący wybraną liczbę
-  const [gameIsOver, setGameIsOver] = useState(true);
+  const [gameIsOver, setGameIsOver] = useState(false); // ✅ false - zaczynamy od ekranu startowego
   const [guessRounds, setGuessRounds] = useState(0); // Stan przechowujący liczbę rund
 
   // Ładowanie plików czcionek z folderu assets
@@ -30,17 +32,18 @@ export default function App() {
   function startNewGameHandler() {
     setUserNumber(null); // Powrót do StartGameScreen
     setGuessRounds(0); // Reset licznika rund
+    setGameIsOver(false); // ✅ reset flagi końca gry
   }
-  
+
   function pickedNumberHandler(pickedNumber) {
     setUserNumber(pickedNumber); // Ustawienie liczby powoduje zmianę ekranu
+    setGameIsOver(false); // ✅ upewniamy się że gra jest aktywna
   }
 
   function gameOverHandler(numberOfRounds) {
-    setGameIsOver(true);
-    setGuessRounds(numberOfRounds);
+    setGameIsOver(true); // Gra skończona
+    setGuessRounds(numberOfRounds); // Zapisujemy liczbę rund
   }
-  
 
   // Logika wyboru ekranu
   let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
@@ -51,28 +54,31 @@ export default function App() {
 
   if (gameIsOver && userNumber) {
     screen = (
-      <GameOverScreen 
-        userNumber={userNumber} 
-        roundsNumber={guessRounds} 
+      <GameOverScreen
+        userNumber={userNumber}
+        roundsNumber={guessRounds}
         onStartNewGame={startNewGameHandler} // Przekazanie funkcji restartu
       />
     );
   }
 
   return (
-    <LinearGradient colors={['#4e0329', '#ddb52f']} style={styles.rootScreen}>
-      <ImageBackground
-        source={require('./assets/images/background.jpg')}
-        resizeMode="cover"
-        style={styles.rootScreen}
-        imageStyle={styles.backgroundImage}
-      >
-        {/* SafeAreaView chroni przed notchem */}
-        <SafeAreaView style={styles.rootScreen}>
-          {screen}
-        </SafeAreaView>
-      </ImageBackground>
-    </LinearGradient>
+    <>
+      <StatusBar style="light" />
+      <LinearGradient colors={['#4e0329', '#ddb52f']} style={styles.rootScreen}>
+        <ImageBackground
+          source={require('./assets/images/background.jpg')}
+          resizeMode="cover"
+          style={styles.rootScreen}
+          imageStyle={styles.backgroundImage}
+        >
+          {/* SafeAreaView chroni przed notchem */}
+          <SafeAreaView style={styles.rootScreen}>
+            {screen}
+          </SafeAreaView>
+        </ImageBackground>
+      </LinearGradient>
+    </>
   );
 }
 

@@ -17,11 +17,15 @@ const styles = StyleSheet.create({
     // Warunkowy padding: mniejszy dla małych urządzeń
     padding: deviceWidth < 380 ? 12 : 24,
     margin: deviceWidth < 380 ? 12 : 24,
-    // ... reszta stylów
+    alignItems: 'center',
   },
   numberText: {
     // Warunkowa wielkość czcionki
     fontSize: deviceWidth < 380 ? 28 : 36,
-    // ... reszta stylów
+    textAlign: 'center',
+    color: '#ddb52f',
+    fontFamily: 'open-sans-bold',
   },
 });
+
+export default NumberContainer;

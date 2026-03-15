@@ -1,6 +1,7 @@
 // components/ui/Title.js
-import { Text, StyleSheet } from 'react-native';
 import Colors from '../../constants/colors';    
+import { Text, StyleSheet, Platform } from 'react-native';
+
 
 function Title({ children }) {
   return <Text style={styles.title}>{children}</Text>;
@@ -10,14 +11,13 @@ export default Title;
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 24,
     fontFamily: 'open-sans-bold',
-    color: 'white', // Zmieniamy na biały dla czytelności
+    fontSize: 24,
+    color: 'white',
     textAlign: 'center',
-    borderWidth: 2,
+    // Użycie Platform.select dla elegancji kodu
+    borderWidth: Platform.select({ ios: 0, android: 2 }), // 0 na iOS, 2 na Androidzie
     borderColor: 'white',
     padding: 12,
-    maxWidth: '80%', // Tytuł zajmie maksymalnie 80% szerokości rodzica
-    width: 300,
   },
 }); //

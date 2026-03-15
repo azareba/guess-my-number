@@ -1,18 +1,20 @@
 // screens/StartGameScreen.js
 import { useState } from 'react';
-import { View, StyleSheet, useWindowDimensions } from 'react-native'; // Import hooka
+import { 
+  View, 
+  TextInput,
+  StyleSheet, 
+  Alert,
+  KeyboardAvoidingView, 
+  ScrollView,
+  useWindowDimensions,
+} from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import Title from '../components/ui/Title';
 
-
-function StartGameScreen(props) {
+function StartGameScreen({ onPickNumber }) {
   const [enteredNumber, setEnteredNumber] = useState('');
-  
-  // Hook automatycznie dostarczy nowe wartości przy obrocie
-  const { width, height } = useWindowDimensions();
-
-  // Obliczamy margines dynamicznie w ciele funkcji
-  const marginTopDistance = height < 380 ? 30 : 100;
+  const { width, height } = useWindowDimensions(); // Dynamiczne wymiary ekranu
 
   function numberInputHandler(enteredText) {
     setEnteredNumber(enteredText); // Zapisujemy tekst
@@ -31,47 +33,64 @@ function StartGameScreen(props) {
       );
       return;
     }
-    
-    props.onPickNumber(chosenNumber); // Przekazujemy poprawną liczbę do App.js
+
+    onPickNumber(chosenNumber); // Przekazujemy poprawną liczbę do App.js
   }
 
   function resetInputHandler() {
     setEnteredNumber(''); // Czyszczenie pola
   }
 
-  return (
-    <View style={[styles.rootContainer, { marginTop: marginTopDistance }]}>
-        <View style={styles.inputContainer}>
-            <Title>Zgadnij liczbę</Title>
+  // marginTop ustawiamy dynamicznie - mniejszy dla trybu poziomego
+  const marginTopDistance = height < 380 ? 30 : 100;
 
+  return (
+    // ScrollView jest niezbędne, aby KeyboardAvoidingView mogło przesunąć zawartość
+    <ScrollView style={styles.screen}>
+      <KeyboardAvoidingView
+        style={styles.screen}
+        behavior="position" // Przesuwa widok do góry, gdy pojawia się klawiatura
+      >
+        <View style={[styles.rootContainer, { marginTop: marginTopDistance }]}>
+          <Title>Zgadnij liczbę</Title>
+          <View style={styles.inputContainer}>
             <TextInput
-                style={styles.numberInput}
-                maxLength={2}
-                keyboardType="number-pad"
-                autoCapitalize="none"
-                autoCorrect={false}
-                onChangeText={numberInputHandler}
-                value={enteredNumber} // Dwukierunkowe wiązanie
+              style={styles.numberInput}
+              maxLength={2}
+              keyboardType="number-pad"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={numberInputHandler}
+              value={enteredNumber} // Dwukierunkowe wiązanie
             />
             <View style={styles.buttonsContainer}>
-                <View style={styles.buttonContainer}>
+              <View style={styles.buttonContainer}>
                 <PrimaryButton onPress={resetInputHandler}>Reset</PrimaryButton>
-                </View>
-                <View style={styles.buttonContainer}>
+              </View>
+              <View style={styles.buttonContainer}>
                 <PrimaryButton onPress={confirmInputHandler}>Potwierdź</PrimaryButton>
-                </View>
+              </View>
             </View>
+          </View>
         </View>
-    </View>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 }
+
 export default StartGameScreen;
 
-
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
+  rootContainer: {
+    flex: 1,
+    alignItems: 'center',
+    // marginTop ustawiamy dynamicznie za pomocą useWindowDimensions
+  },
   inputContainer: {
     padding: 16,
-    marginTop: 100,
     backgroundColor: '#4e0329',
     borderRadius: 8,
     elevation: 4, // Cień dla Androida
@@ -80,6 +99,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOpacity: 0.25,
     alignItems: 'center',
+    marginHorizontal: 24,
   },
   numberInput: {
     height: 50,
@@ -98,9 +118,4 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1, // Każdy przycisk zajmuje połowę szerokości kontenera (waga 1:1)
   },
-  rootContainer: {
-    flex: 1,
-    alignItems: 'center',
-    // margin we współczesnych ekranach mobilnych ustawiamy dynamicznie powyżej
-  }
 });
