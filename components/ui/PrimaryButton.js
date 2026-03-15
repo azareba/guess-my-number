@@ -1,17 +1,24 @@
-// components/PrimaryButton.js
-import { View, Text, StyleSheet } from 'react-native';
+// components/ui/PrimaryButton.js
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 
-// Używamy destrukturyzacji, aby wyciągnąć children z propsów
-function PrimaryButton({ children }) {
+// Wyciągamy onPress z propsów (destrukturyzacja)
+function PrimaryButton({ children, onPress }) {
   return (
     <View style={styles.buttonOuterContainer}>
-      <View style={styles.buttonInnerContainer}>
+      <Pressable
+        style={({ pressed }) =>
+          pressed
+            ? [styles.buttonInnerContainer, styles.pressed]
+            : styles.buttonInnerContainer
+        }
+        onPress={onPress} // Przekazujemy funkcję dalej
+        android_ripple={{ color: '#640233' }}
+      >
         <Text style={styles.buttonText}>{children}</Text>
-      </View>
+      </Pressable>
     </View>
   );
 }
-
 export default PrimaryButton;
 
 const styles = StyleSheet.create({
